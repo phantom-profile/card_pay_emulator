@@ -1,4 +1,5 @@
 .idea
 venv
 __pycache__
-funny_farm_database
+*.db
+.env
