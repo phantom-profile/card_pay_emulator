@@ -1,4 +1,4 @@
-from sqlite3 import IntegrityError, DatabaseError
+from sqlite3 import DatabaseError
 
 from uuid import uuid4, UUID
 
