@@ -30,8 +30,10 @@ and be sure that it was atomic
 
 ## SETUP PROJECT
 #### Install dependencies
-1) activate venv
-2) `pip install -r requirements.txt`
+1) activate venv 
+2) `python -m venv venv`
+3) `source venv/bin/activate`
+4) `pip install -r requirements.txt`
 
 #### Init project database
 1) init database - `alembic upgrade head`
