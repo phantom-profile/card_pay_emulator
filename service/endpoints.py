@@ -57,10 +57,10 @@ def get_cards(token: Token) -> CardsList:
 
 @app.post("/cards/transaction")
 def make_transaction(data: TransactionForm, token: Token) -> TransactionResult:
-    # raise HTTPException(
-    #     status_code=status.HTTP_501_NOT_IMPLEMENTED,
-    #     detail='This is not implemented yet :('
-    # )
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail='This is not implemented yet :('
+    )
 
     user = get_user(token)
     src_card = get_card(data.src_card_uuid, user=user)
