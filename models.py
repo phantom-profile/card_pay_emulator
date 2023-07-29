@@ -5,6 +5,8 @@ from uuid import uuid4, UUID
 from dotenv import dotenv_values
 from pydantic import BaseModel, Field, field_validator, confloat
 
+from database import Card
+
 env_variables = dotenv_values(".env")
 
 UsdAmount = confloat(gt=0, lt=1_000_000)
@@ -72,6 +74,17 @@ class TrustCardResponse(BaseModel):
 class CardRepresentation(CardForm):
     card_uuid: UUID = Field(examples=[uuid4()])
     card_user: str = Field(examples=['my_app'])
+
+    @classmethod
+    def from_db(cls, card: Card):
+        return cls(
+            card_number=card.card_number,
+            cvv=card.cvv,
+            owner=card.owner,
+            payment_system=card.payment_system,
+            card_uuid=card.id,
+            card_user=card.trusted_app.app_name
+        )
 
 
 class CardsList(BaseModel):
