@@ -52,9 +52,10 @@ class Db:
         card = Card(
             card_number=data.card_number,
             cvv=data.cvv,
+            bank_name=data.bank_name,
             owner=data.owner,
             payment_system=data.payment_system,
-            trusted_app_id=creator.id,
+            trusted_app_id=creator.id
         )
         self.session.add(card)
         self.session.commit()

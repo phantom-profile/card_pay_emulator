@@ -92,6 +92,7 @@ class CardRepresentation(CardForm):
             owner=card.owner,
             payment_system=card.payment_system,
             card_uuid=card.id,
+            bank_name=card.bank_name,
             card_user=card.trusted_app.app_name
         )
 
