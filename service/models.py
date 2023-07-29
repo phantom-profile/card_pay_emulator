@@ -38,17 +38,26 @@ class TokenParam(BaseModel):
 
 class CardForm(BaseModel):
     SYSTEMS: ClassVar = ['VISA', 'MIR', 'MASTER CARD', 'MAESTRO']
+    BANKS: ClassVar = ['Sber', 'Tinkoff', 'Kaspi', 'VTB', 'Gazprom', 'Unicredit']
 
     card_number: str = Field(pattern=r'[0-9]{16}', min_length=16, max_length=16)
     cvv: str = Field(pattern=r'[0-9]{3}', min_length=3, max_length=3)
     owner: str = Field(pattern=r'^[A-Z ]{3,50}$')
     payment_system: str = Field(examples=SYSTEMS)
+    bank_name: str = Field(examples=SYSTEMS)
 
     @field_validator('payment_system')
     @classmethod
     def known_payment_system(cls, value: str) -> str:
         if value not in cls.SYSTEMS:
             raise ValueError(f'Unknown payment system. Possible variants: {cls.SYSTEMS}')
+        return value
+
+    @field_validator('bank_name')
+    @classmethod
+    def bank_name(cls, value: str) -> str:
+        if value not in cls.BANKS:
+            raise ValueError(f'Unknown bank. Possible variants: {cls.SYSTEMS}')
         return value
 
     model_config = {
