@@ -1,4 +1,4 @@
-from enum import StrEnum
+from enum import Enum
 from typing import ClassVar
 from uuid import uuid4, UUID
 
@@ -12,7 +12,7 @@ env_variables = dotenv_values(".env")
 UsdAmount = confloat(gt=0, lt=1_000_000)
 
 
-class TransactionStatuses(StrEnum):
+class TransactionStatuses(Enum):
     SUCCESS = 'SUCCESS'
     REJECTED = 'REJECTED'
     FAILED = 'FAILED'
@@ -55,7 +55,7 @@ class CardForm(BaseModel):
 
     @field_validator('bank_name')
     @classmethod
-    def bank_name(cls, value: str) -> str:
+    def validate_bank_name(cls, value: str) -> str:
         if value not in cls.BANKS:
             raise ValueError(f'Unknown bank. Possible variants: {cls.SYSTEMS}')
         return value
