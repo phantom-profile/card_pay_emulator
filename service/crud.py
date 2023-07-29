@@ -4,8 +4,8 @@ from uuid import uuid4, UUID
 
 from sqlalchemy.exc import SQLAlchemyError
 
-from database import Card, User, Transaction, SessionLocal
-from models import SignUpForm, SignUpResponse, CardForm, TrustCardResponse
+from service.database import Card, User, Transaction, SessionLocal
+from service.models import SignUpForm, SignUpResponse, CardForm, TrustCardResponse, TransactionForm
 
 
 import functools
@@ -65,6 +65,9 @@ class Db:
             card_uuid=card.id,
             card_user=creator.app_name
         )
+
+    def create_transaction(self, data: TransactionForm):
+        pass
 
     def __del__(self):
         print('closing session')

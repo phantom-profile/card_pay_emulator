@@ -2,13 +2,13 @@ from typing import Annotated
 
 from fastapi import FastAPI, status, Depends, HTTPException
 
-from models import (
+from service.models import (
     SignUpForm, SignUpResponse,
     MainInfo, TokenParam,
     CardForm, CardsList, CardRepresentation, TrustCardResponse,
     TransactionForm, TransactionResult, TransactionStatuses
 )
-from crud import Db
+from service.crud import Db
 
 Token = Annotated[TokenParam, Depends()]
 app = FastAPI()

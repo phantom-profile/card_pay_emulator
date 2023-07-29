@@ -5,7 +5,7 @@ from uuid import uuid4, UUID
 from dotenv import dotenv_values
 from pydantic import BaseModel, Field, field_validator, confloat
 
-from database import Card
+from service.database import Card
 
 env_variables = dotenv_values(".env")
 
