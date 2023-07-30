@@ -5,7 +5,7 @@ from typing import ClassVar
 from uuid import uuid4, UUID
 
 from dotenv import dotenv_values
-from pydantic import BaseModel, Field, field_validator, confloat, validator, model_validator
+from pydantic import BaseModel, Field, field_validator, confloat, model_validator
 
 from service.database import Card, Transaction
 
@@ -46,7 +46,11 @@ class CardForm(BaseModel):
     SYSTEMS: ClassVar = ['VISA', 'MIR', 'MASTER CARD', 'MAESTRO']
     BANKS: ClassVar = ['Sber', 'Tinkoff', 'Kaspi', 'VTB', 'Gazprom', 'Unicredit']
 
-    card_number: str = Field(pattern=r'[0-9]{16}', min_length=16, max_length=16, examples=['1234123412341234'])
+    card_number: str = Field(
+        pattern=r'[0-9]{16}',
+        min_length=16, max_length=16,
+        examples=['1234123412341234']
+    )
     cvv: str = Field(pattern=r'[0-9]{3}', min_length=3, max_length=3, examples=['000'])
     owner: str = Field(pattern=r'^[A-Z ]{3,50}$', examples=["FIRSTNAME LASTNAME"])
     payment_system: str = Field(examples=SYSTEMS)
@@ -102,7 +106,7 @@ class TransactionForm(BaseModel):
     @model_validator(mode='after')
     def validate_dst_card_uuid(self):
         if self.src_card_uuid == self.dst_card_uuid:
-            raise ValueError(f'Source and destination cards must be different')
+            raise ValueError('Source and destination cards must be different')
         return self
 
 

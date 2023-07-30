@@ -1,7 +1,13 @@
 import datetime
 import uuid
 
-from sqlalchemy import create_engine, Column, ForeignKey, Integer, String, Uuid, DateTime, Float, UniqueConstraint, or_
+from sqlalchemy import (
+    create_engine,
+    Column,
+    ForeignKey, Integer, String, Uuid, DateTime, Float,
+    UniqueConstraint,
+    or_
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, Query
 
@@ -47,8 +53,16 @@ class Card(Base):
     bank_name = Column(String, nullable=False)
 
     trusted_app = relationship("User", back_populates="cards", foreign_keys=[trusted_app_id])
-    sent_transactions = relationship("Transaction", back_populates="src", foreign_keys='Transaction.src_card_id')
-    received_transactions = relationship("Transaction", back_populates="dst", foreign_keys='Transaction.dst_card_id')
+    sent_transactions = relationship(
+        "Transaction",
+        back_populates="src",
+        foreign_keys='Transaction.src_card_id'
+    )
+    received_transactions = relationship(
+        "Transaction",
+        back_populates="dst",
+        foreign_keys='Transaction.dst_card_id'
+    )
 
     __table_args__ = (UniqueConstraint('card_number', 'cvv', name='card_number_cvv_index'),)
 

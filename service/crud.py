@@ -5,7 +5,13 @@ from uuid import uuid4, UUID
 from sqlalchemy.exc import SQLAlchemyError
 
 from service.database import Card, User, Transaction, SessionLocal
-from service.models import SignUpForm, SignUpResponse, CardForm, TrustCardResponse, TransactionResult
+from service.models import (
+    SignUpForm,
+    CardForm,
+    SignUpResponse,
+    TrustCardResponse,
+    TransactionResult
+)
 
 
 import functools
