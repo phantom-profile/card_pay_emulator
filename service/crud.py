@@ -5,7 +5,7 @@ from uuid import uuid4, UUID
 from sqlalchemy.exc import SQLAlchemyError
 
 from service.database import Card, User, Transaction, SessionLocal
-from service.models import SignUpForm, SignUpResponse, CardForm, TrustCardResponse, TransactionForm
+from service.models import SignUpForm, SignUpResponse, CardForm, TrustCardResponse, TransactionResult
 
 
 import functools
@@ -67,8 +67,19 @@ class Db:
             card_user=creator.app_name
         )
 
-    def create_transaction(self, data: TransactionForm):
-        pass
+    @rollback_on_fail
+    def create_transaction(self, data: TransactionResult) -> Transaction:
+        transaction = Transaction(
+            src_card_id=data.src_card_uuid,
+            dst_card_id=data.dst_card_uuid,
+            status=data.status.value,
+            amount_usd=data.money_amount_usd
+        )
+        self.session.add(transaction)
+        self.session.commit()
+        self.session.refresh(transaction)
+
+        return transaction
 
     def __del__(self):
         print('closing session')

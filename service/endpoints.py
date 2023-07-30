@@ -6,9 +6,10 @@ from service.models import (
     SignUpForm, SignUpResponse,
     MainInfo, TokenParam,
     CardForm, CardsList, CardRepresentation, TrustCardResponse,
-    TransactionForm, TransactionResult, TransactionStatuses
+    TransactionForm, TransactionResult
 )
 from service.crud import Db
+from service.transactions import TransactionPerformService
 
 Token = Annotated[TokenParam, Depends()]
 app = FastAPI()
@@ -55,20 +56,19 @@ def get_cards(token: Token) -> CardsList:
     return CardsList(cards=[CardRepresentation.from_db(card) for card in user.cards])
 
 
+@app.get("/transactions")
+def get_transactions(token: Token) -> list[TransactionResult]:
+    user = get_user(token)
+    return CardsList(cards=[CardRepresentation.from_db(card) for card in user.cards])
+
+
 @app.post("/cards/transaction")
 def make_transaction(data: TransactionForm, token: Token) -> TransactionResult:
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail='This is not implemented yet :('
-    )
-
     user = get_user(token)
     src_card = get_card(data.src_card_uuid, user=user)
     dst_card = get_card(data.dst_card_uuid, user=user)
+    result = TransactionPerformService(
+        src=src_card, dst=dst_card, db=db, amount=data.money_amount_usd
+    ).perform()
 
-    return TransactionResult(
-        dst_card_uuid=src_card.id,
-        src_card_uuid=dst_card.id,
-        status=TransactionStatuses.SUCCESS,
-        money_amount_usd=data.money_amount_usd
-    )
+    return result

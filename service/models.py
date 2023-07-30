@@ -1,9 +1,10 @@
 from enum import Enum
+from random import choice
 from typing import ClassVar
 from uuid import uuid4, UUID
 
 from dotenv import dotenv_values
-from pydantic import BaseModel, Field, field_validator, confloat
+from pydantic import BaseModel, Field, field_validator, confloat, validator, model_validator
 
 from service.database import Card
 
@@ -17,6 +18,10 @@ class TransactionStatuses(Enum):
     REJECTED = 'REJECTED'
     FAILED = 'FAILED'
 
+    @classmethod
+    def random(cls):
+        return choice([cls.SUCCESS, cls.SUCCESS, cls.FAILED, cls.REJECTED])
+
 
 class MainInfo(BaseModel):
     created_by: str = env_variables['AUTHOR']
@@ -25,7 +30,7 @@ class MainInfo(BaseModel):
 
 
 class SignUpForm(BaseModel):
-    app_name: str = Field(max_length=50, pattern=r'^[a-zA-Z_]{3,50}$', examples=['my_app'])
+    app_name: str = Field(max_length=50, pattern=r'^[a-zA-Z0-9_]{3,50}$', examples=['my_app'])
 
 
 class SignUpResponse(SignUpForm):
@@ -40,11 +45,11 @@ class CardForm(BaseModel):
     SYSTEMS: ClassVar = ['VISA', 'MIR', 'MASTER CARD', 'MAESTRO']
     BANKS: ClassVar = ['Sber', 'Tinkoff', 'Kaspi', 'VTB', 'Gazprom', 'Unicredit']
 
-    card_number: str = Field(pattern=r'[0-9]{16}', min_length=16, max_length=16)
-    cvv: str = Field(pattern=r'[0-9]{3}', min_length=3, max_length=3)
-    owner: str = Field(pattern=r'^[A-Z ]{3,50}$')
+    card_number: str = Field(pattern=r'[0-9]{16}', min_length=16, max_length=16, examples=['1234123412341234'])
+    cvv: str = Field(pattern=r'[0-9]{3}', min_length=3, max_length=3, examples=['000'])
+    owner: str = Field(pattern=r'^[A-Z ]{3,50}$', examples=["FIRSTNAME LASTNAME"])
     payment_system: str = Field(examples=SYSTEMS)
-    bank_name: str = Field(examples=SYSTEMS)
+    bank_name: str = Field(examples=BANKS)
 
     @field_validator('payment_system')
     @classmethod
@@ -57,21 +62,8 @@ class CardForm(BaseModel):
     @classmethod
     def validate_bank_name(cls, value: str) -> str:
         if value not in cls.BANKS:
-            raise ValueError(f'Unknown bank. Possible variants: {cls.SYSTEMS}')
+            raise ValueError(f'Unknown bank. Possible variants: {cls.BANKS}')
         return value
-
-    model_config = {
-        "json_schema_extra": {
-            "examples": [
-                {
-                    "card_number": "1234123412341234",
-                    "cvv": "000",
-                    "owner": "FIRSTNAME LASTNAME",
-                    "payment_system": SYSTEMS[0],
-                }
-            ]
-        }
-    }
 
 
 class TrustCardResponse(BaseModel):
@@ -106,6 +98,13 @@ class TransactionForm(BaseModel):
     dst_card_uuid: UUID = Field(examples=[uuid4()])
     money_amount_usd: UsdAmount
 
+    @model_validator(mode='after')
+    def validate_dst_card_uuid(self):
+        if self.src_card_uuid == self.dst_card_uuid:
+            raise ValueError(f'Source and destination cards must be different')
+        return self
+
 
 class TransactionResult(TransactionForm):
     status: TransactionStatuses
+    comission: confloat(ge=0, lt=1_000_000)
