@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from service.database import Card
 from service.models import TransactionResult, TransactionStatuses
 
@@ -21,7 +23,8 @@ class TransactionPerformService:
             dst_card_uuid=self.dst.id,
             money_amount_usd=self.amount - self.comission,
             status=self.status,
-            comission=self.comission
+            comission=self.comission,
+            created_at=datetime.now()
         )
         self.db.create_transaction(result)
         return result

@@ -76,7 +76,8 @@ class Db:
             src_card_id=data.src_card_uuid,
             dst_card_id=data.dst_card_uuid,
             status=data.status.value,
-            amount_usd=data.money_amount_usd
+            amount_usd=data.money_amount_usd,
+            comission=data.comission
         )
         self.session.add(transaction)
         self.session.commit()
