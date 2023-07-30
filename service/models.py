@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from random import choice
 from typing import ClassVar
@@ -6,7 +7,7 @@ from uuid import uuid4, UUID
 from dotenv import dotenv_values
 from pydantic import BaseModel, Field, field_validator, confloat, validator, model_validator
 
-from service.database import Card
+from service.database import Card, Transaction
 
 env_variables = dotenv_values(".env")
 
@@ -108,3 +109,26 @@ class TransactionForm(BaseModel):
 class TransactionResult(TransactionForm):
     status: TransactionStatuses
     comission: confloat(ge=0, lt=1_000_000)
+    created_at: datetime
+
+    @classmethod
+    def from_db(cls, transaction: Transaction):
+        return cls(
+            src_card_uuid=transaction.src_card_id,
+            dst_card_uuid=transaction.dst_card_id,
+            money_amount_usd=transaction.amount_usd,
+            status=transaction.status,
+            comission=transaction.comission,
+            created_at=transaction.created_at
+        )
+
+
+class TransactionsFilter(BaseModel):
+    amount_gt: int
+    status_eq: TransactionStatuses
+    src_card_uuid_eq: UUID = Field(examples=[uuid4()])
+    dst_card_uuid_eq: UUID = Field(examples=[uuid4()])
+
+
+class TransactionsList(BaseModel):
+    transactions: list[TransactionResult]

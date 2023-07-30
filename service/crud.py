@@ -37,6 +37,9 @@ class Db:
             cards_scope = cards_scope.filter(Card.trusted_app_id == user.id)
         return cards_scope.first()
 
+    def get_transactions(self, user: User) -> list[Transaction]:
+        return user.transactions_query().with_session(self.session).all()
+
     @rollback_on_fail
     def create_user(self, data: SignUpForm):
         user = User(

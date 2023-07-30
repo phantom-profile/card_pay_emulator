@@ -37,7 +37,7 @@ class TransactionPerformService:
         if self.amount < self.NO_COMISSION_AMOUNT:
             comission_percent += self.SERVICE_COMISSION
 
-        return self.amount * comission_percent
+        return round(self.amount * comission_percent, 2)
 
     def request_transaction(self):
         # emulating API call to bank system

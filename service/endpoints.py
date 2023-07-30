@@ -6,7 +6,7 @@ from service.models import (
     SignUpForm, SignUpResponse,
     MainInfo, TokenParam,
     CardForm, CardsList, CardRepresentation, TrustCardResponse,
-    TransactionForm, TransactionResult
+    TransactionForm, TransactionResult, TransactionsList
 )
 from service.crud import Db
 from service.transactions import TransactionPerformService
@@ -57,9 +57,10 @@ def get_cards(token: Token) -> CardsList:
 
 
 @app.get("/transactions")
-def get_transactions(token: Token) -> list[TransactionResult]:
+def get_transactions(token: Token) -> TransactionsList:
     user = get_user(token)
-    return CardsList(cards=[CardRepresentation.from_db(card) for card in user.cards])
+    transactions = db.get_transactions(user)
+    return TransactionsList(transactions=[TransactionResult.from_db(t) for t in transactions])
 
 
 @app.post("/cards/transaction")
