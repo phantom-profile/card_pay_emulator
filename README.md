@@ -39,5 +39,5 @@ and be sure that it was atomic
 2) create .env file - `cp .env.example .env`
 
 #### launch server
-1) uvicorn service.endpoints:app --port 8002
+1) uvicorn service.endpoints:app --port 8002 --reload --log-config ./log.ini
 2) access web app at http://localhost:8002
